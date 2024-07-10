@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux'; // agregar useDispatch
 
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
@@ -10,7 +10,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 
-import { startLogOut } from 'src/store/auth/thunks';
+// import { startLogOut } from 'src/store/auth/thunks';
 
 // ----------------------------------------------------------------------
 
@@ -35,14 +35,15 @@ export default function AccountPopover() {
   const [open, setOpen] = useState(null);
   const user = useSelector((state) => state.auth);
 
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch(); ToDo descomentar cuando acaben pruebas
 
   const handleOpen = (event) => {
     setOpen(event.currentTarget);
   };
 
   const handleLogOut = () => {
-    dispatch(startLogOut());
+    // dispatch(startLogOut()); ToDo descomentar cuando acaben pruebas
+    console.log('first');
   };
   const handleClose = () => {
     setOpen(null);

@@ -15,7 +15,7 @@ export const Page404 = lazy(() => import('src/pages/page-not-found'));
 // // ----------------------------------------------------------------------
 
 export default function Router() {
-  useCheckAuth();
+  //useCheckAuth();
   const { status } = useSelector((state) => state.auth);
 
   const routes = useRoutes([
