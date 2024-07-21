@@ -4,13 +4,13 @@ import { PrivateRoutes } from './privateRoutes';
 import { AuthRoutes } from './auth';
 
 export const AppRouter = () => {
-  const status = 'Not-authenticated'; //useCheckAuth(); descomentar luego de pruebas cambiar status por useCheckAuth();
+  const status = useCheckAuth(); //'Not-authenticated'; // Todo useCheckAuth(); descomentar luego de pruebas cambiar status por useCheckAuth();
 
   if (status === 'checking') return <div>Loading...</div>;
 
   return (
     <Routes>
-      {status === 'Not-authenticated' ? ( //cambiar status por authenticated;
+      {status === 'Authenticated' ? ( // Todo cambiar status por authenticated;
         <Route path="*" element={<PrivateRoutes />} />
       ) : (
         <Route path="/auth/*" element={<AuthRoutes />} />

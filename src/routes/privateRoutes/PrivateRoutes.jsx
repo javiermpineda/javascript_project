@@ -8,9 +8,10 @@ export const IndexPage = lazy(() => import('src/pages/app'));
 export const BlogPage = lazy(() => import('src/pages/blog'));
 export const UserPage = lazy(() => import('src/pages/user'));
 export const ProductsPage = lazy(() => import('src/pages/products'));
+export const AdminSettings = lazy(() => import('src/pages/adminSettings'));
+export const AdminProfile = lazy(() => import('src/pages/adminProfile'));
 
 export const PrivateRoutes = () => {
-  //console.log('mostrando rutas privadas ');
   return (
     <DashboardLayout>
       <Suspense fallback={<CircularProgress />}>
@@ -18,7 +19,10 @@ export const PrivateRoutes = () => {
           <Route path="/" element={<IndexPage />} />
           <Route path="blog" element={<BlogPage />} />
           <Route path="user" element={<UserPage />} />
+          <Route path="/admin/profile" element={<AdminProfile />} />
+          <Route path="/admin/settings" element={<AdminSettings />} />
           <Route path="products" element={<ProductsPage />} />
+
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </Suspense>
