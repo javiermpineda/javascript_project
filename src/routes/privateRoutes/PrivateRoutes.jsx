@@ -4,12 +4,15 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 
 import DashboardLayout from 'src/layouts/dashboard';
 
+
 export const IndexPage = lazy(() => import('src/pages/app'));
 export const BlogPage = lazy(() => import('src/pages/blog'));
 export const UserPage = lazy(() => import('src/pages/user'));
 export const ProductsPage = lazy(() => import('src/pages/products'));
 export const AdminSettings = lazy(() => import('src/pages/adminSettings'));
 export const AdminProfile = lazy(() => import('src/pages/adminProfile'));
+export const Client = lazy(() => import('src/pages/client'));
+export const EditClient = lazy(() => import('src/pages/editClient'));
 
 export const PrivateRoutes = () => {
   return (
@@ -21,6 +24,8 @@ export const PrivateRoutes = () => {
           <Route path="user" element={<UserPage />} />
           <Route path="/admin/profile" element={<AdminProfile />} />
           <Route path="/admin/settings" element={<AdminSettings />} />
+          <Route path="/admin/client" element={<Client />} />
+          <Route path="/admin/editClient/:id" element={<EditClient />} />
           <Route path="products" element={<ProductsPage />} />
 
           <Route path="*" element={<Navigate to="/" />} />
