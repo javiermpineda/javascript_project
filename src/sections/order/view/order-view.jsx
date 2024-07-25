@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 
@@ -7,33 +8,55 @@ import { DataGrid } from '@mui/x-data-grid';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 
-import { getData } from 'src/helpers/getData';
 import { deleteData } from 'src/helpers/deleteData';
+import { FirebaseDb } from 'src/firebase/firebaseConfig';
+import { collection, onSnapshot, getDocs } from 'firebase/firestore';
 
 // ----------------------------------------------------------------------
 export default function OrderView() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [drivers, setDrivers] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchDrivers = async () => {
       try {
-        const response = await getData('registration/order/data');
-        console.log('Fetched data:', response); // Log the entire response
+        const driversCollection = collection(FirebaseDb, 'profile', 'employee', 'data');
+        const driversSnapshot = await getDocs(driversCollection);
+        const driversList = driversSnapshot.docs.map((doc) => ({
+          id: doc.id,
+          name: `${doc.data().firstName} ${doc.data().lastName}`,
+          position: doc.data().position,
+        }))
+        .filter(employee => employee.position === 'driver');;
+        setDrivers(driversList);
+        return driversList;
+      } catch (error) {
+        setError(error.message);
+      }
+    };
 
-        if (Array.isArray(response)) {
-          const data = response.map((order) => ({
-            id: order.id,
-            date: order.date,
-            driverName: order.driver.name,
-          }));
-          setOrders(data);
-        } else {
-          setError('Invalid response format');
-          console.error('Invalid response format:', response);
-        }
+    const fetchOrders = async (driversList) => {
+      try {
+        const ordersCollection = collection(FirebaseDb, 'order');
+        onSnapshot(ordersCollection, (querySnapshot) => {
+          const docs = [];
+          querySnapshot.forEach((doc) => {
+            docs.push({ ...doc.data(), id: doc.id });
+          });
+          
+          const ordersWithDriverNames = docs.map((order) => {
+            const driver = driversList.find((d) => d.id === order.driverId);
+            return {
+              ...order,
+              driverName: driver ? driver.name : 'Unknown',
+            };
+          });
+
+          setOrders(ordersWithDriverNames);
+        });
       } catch (e) {
         setError(e.message);
       } finally {
@@ -41,19 +64,29 @@ export default function OrderView() {
       }
     };
 
-    fetchData();
+    fetchDrivers().then((driversList) => {
+      fetchOrders(driversList);
+    });
   }, []);
 
   if (loading) {
-    return <Typography variant="h6" align="center">Loading...</Typography>;
+    return (
+      <Typography variant="h6" align="center">
+        Loading...
+      </Typography>
+    );
   }
 
   if (error) {
-    return <Typography variant="h6" align="center" color="error">Error: {error}</Typography>;
+    return (
+      <Typography variant="h6" align="center" color="error">
+        Error: {error}
+      </Typography>
+    );
   }
 
   const columns = [
-    { field: 'date', headerName: 'Date', width: 200 },
+    { field: 'orderDate', headerName: 'Date', width: 200 },
     { field: 'driverName', headerName: 'Driver', width: 300 },
     {
       field: 'actions',
@@ -84,18 +117,21 @@ export default function OrderView() {
   ];
 
   const handleEdit = (id) => {
-    // Navigate to the edit page
-    navigate(`/order/editOrder/${id}`);
+    navigate(`/order/edit/${id}`);
   };
 
   const handleDelete = async (id) => {
     try {
       await deleteData(`order/data/${id}`);
-      setOrders(orders.filter(order => order.id !== id));
+      setOrders(orders.filter((order) => order.id !== id));
       alert('Order deleted successfully (simulated)');
     } catch (e) {
       setError(e.message);
     }
+  };
+
+  const handleAddClick = () => {
+    navigate('/order/add');
   };
 
   return (
@@ -103,6 +139,9 @@ export default function OrderView() {
       <Typography variant="h4" align="center" gutterBottom>
         Order Registrations
       </Typography>
+      <Button variant="contained" color="primary" onClick={handleAddClick} sx={{ marginBottom: 2 }}>
+        Agregar
+      </Button>
       <Box sx={{ height: 600, width: '100%' }}>
         <DataGrid rows={orders} columns={columns} pageSize={10} />
       </Box>
