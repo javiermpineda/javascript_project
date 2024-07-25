@@ -14,6 +14,7 @@ export const AdminProfile = lazy(() => import('src/pages/adminProfile'));
 export const Client = lazy(() => import('src/pages/client'));
 export const EditClient = lazy(() => import('src/pages/editClient'));
 export const OrderPage = lazy(() => import('src/pages/order'));
+export const OrderCreatePage = lazy(() => import('src/pages/orderCreate'));
 
 export const PrivateRoutes = () => {
   return (
@@ -29,6 +30,7 @@ export const PrivateRoutes = () => {
           <Route path="/admin/editClient/:id" element={<EditClient />} />
           <Route path="products" element={<ProductsPage />} />
           <Route path="order" element={<OrderPage />} />
+          <Route path="order/add" element={<OrderCreatePage />} />
 
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
