@@ -8,7 +8,9 @@ import { DataGrid } from '@mui/x-data-grid';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 
-import { deleteData } from 'src/helpers/deleteData';
+import Swal from 'sweetalert2'; // Importa SweetAlert2
+
+import { deleteDoc, doc } from 'firebase/firestore'; // Importa deleteDoc y doc para eliminar documentos
 import { FirebaseDb } from 'src/firebase/firebaseConfig';
 import { collection, onSnapshot, getDocs } from 'firebase/firestore';
 
@@ -121,13 +123,26 @@ export default function OrderView() {
   };
 
   const handleDelete = async (id) => {
-    try {
-      await deleteData(`order/data/${id}`);
-      setOrders(orders.filter((order) => order.id !== id));
-      alert('Order deleted successfully (simulated)');
-    } catch (e) {
-      setError(e.message);
-    }
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "Do you want to delete this order?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'No, cancel!',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const orderDoc = doc(FirebaseDb, 'order', id);
+          await deleteDoc(orderDoc);
+          setOrders(orders.filter((order) => order.id !== id));
+          Swal.fire('Deleted!', 'The order has been deleted.', 'success');
+        } catch (e) {
+          setError(e.message);
+          Swal.fire('Error!', 'There was an error deleting the order.', 'error');
+        }
+      }
+    });
   };
 
   const handleAddClick = () => {
