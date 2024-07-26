@@ -93,7 +93,7 @@ export default function OrderView() {
     {
       field: 'actions',
       headerName: 'Actions',
-      width: 200,
+      width: 300,
       renderCell: (params) => (
         <Box>
           <Button
@@ -109,14 +109,27 @@ export default function OrderView() {
             variant="contained"
             color="error"
             size="small"
+            style={{ marginRight: 8 }}
             onClick={() => handleDelete(params.row.id)}
           >
             Delete
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            size="small"
+            onClick={() => handleFinalize(params.row.id)}
+          >
+            Finalize
           </Button>
         </Box>
       ),
     },
   ];
+
+  const handleFinalize = (id) => {
+    navigate(`/order/finalize/${id}`);
+  };
 
   const handleEdit = (id) => {
     navigate(`/order/edit/${id}`);
