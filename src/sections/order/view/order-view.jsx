@@ -155,7 +155,7 @@ export default function OrderView() {
         Order Registrations
       </Typography>
       <Button variant="contained" color="primary" onClick={handleAddClick} sx={{ marginBottom: 2 }}>
-        Agregar
+        Create
       </Button>
       <Box sx={{ height: 600, width: '100%' }}>
         <DataGrid rows={orders} columns={columns} pageSize={10} />

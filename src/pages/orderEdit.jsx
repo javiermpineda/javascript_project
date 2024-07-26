@@ -1,17 +1,17 @@
 import { Helmet } from 'react-helmet-async';
 
-import { OrderCreateView } from 'src/sections/order/view';
+import { OrderEditView } from 'src/sections/order/view';
 
 // ----------------------------------------------------------------------
 
-export default function OrderCreate() {
+export default function OrderEdit() {
   return (
     <>
       <Helmet>
-        <title> Order Create | Minimal UI </title>
+        <title> Order Edit | Minimal UI </title>
       </Helmet>
 
-      <OrderCreateView />
+      <OrderEditView />
     </>
   );
 }
