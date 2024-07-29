@@ -1,14 +1,15 @@
 // src/helpers/updateData.js
+import { doc, updateDoc } from 'firebase/firestore/lite';
 
-export const updateData = async (url, data) => {
-  console.log('Simulating update operation');
-  console.log('URL:', url);
-  console.log('Data:', data);
+import { FirebaseDb } from 'src/firebase/firebaseConfig';
 
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      console.log('Update successful (simulated)');
-      resolve({ success: true });
-    }, 1000); // Simulate a delay
-  });
+export const updateData = async (path, id, data) => {
+  try {
+    const docRef = doc(FirebaseDb, path, id);
+    await updateDoc(docRef, data);
+    console.log('Document successfully updated!');
+  } catch (error) {
+    console.error('Error updating document:', error);
+    throw error;
+  }
 };
