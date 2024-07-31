@@ -220,6 +220,10 @@ const OrderEditView = () => {
     );
   }
 
+  const handleCancel = () => {
+    navigate('/order');
+  };
+
   return (
     <Container>
       <Typography variant="h4" align="center" gutterBottom>
@@ -248,6 +252,9 @@ const OrderEditView = () => {
         <Grid item xs={12} md={4}>
           <Button variant="contained" color="primary" onClick={handleSubmit}>
             Update
+          </Button>
+          <Button variant="contained" color="secondary" onClick={handleCancel} style={{ marginLeft: '10px' }}>
+            Cancel
           </Button>
         </Grid>
       </Grid>
