@@ -15,6 +15,11 @@ export const Client = lazy(() => import('src/pages/client'));
 export const EditClient = lazy(() => import('src/pages/editClient'));
 export const AddClient = lazy(() => import('src/pages/addClient'));
 export const ClockInClockOut = lazy(() => import('src/pages/clockInClockOut'));
+export const OrderPage = lazy(() => import('src/pages/order'));
+export const OrderCreatePage = lazy(() => import('src/pages/orderCreate'));
+export const OrderEditPage = lazy(() => import('src/pages/orderEdit'));
+export const OrderFinalizePage = lazy(() => import('src/pages/orderFinalize'));
+
 
 export const PrivateRoutes = () => {
   return (
@@ -31,6 +36,10 @@ export const PrivateRoutes = () => {
           <Route path="/admin/addClient/" element={<AddClient />} />
           <Route path="/admin/clockInClockOut/" element={<ClockInClockOut />} />
           <Route path="products" element={<ProductsPage />} />
+          <Route path="order" element={<OrderPage />} />
+          <Route path="order/add" element={<OrderCreatePage />} />
+          <Route path="order/edit/:id" element={<OrderEditPage />} />
+          <Route path="order/finalize/:id" element={<OrderFinalizePage />} />
 
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>

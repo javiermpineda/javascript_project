@@ -40,6 +40,11 @@ const navConfig = [
     ],
   },
   {
+    title: 'order',
+    path: '/order',
+    icon: icon('ic_cart'),
+  },
+  {
     title: 'product',
     path: '/products',
     icon: icon('ic_cart'),
