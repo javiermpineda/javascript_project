@@ -32,6 +32,11 @@ const navConfig = [
         path: '/admin/client',
         icon: icon('ic_client'),
       },
+      {
+        title: 'ClockIn ClockOut',
+        path: '/admin/clockInClockOut',
+        icon: icon('ic_client'),
+      },
     ],
   },
   {

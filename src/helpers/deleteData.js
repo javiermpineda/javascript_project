@@ -1,14 +1,15 @@
 // src/helpers/deleteData.js
+import { doc, deleteDoc } from 'firebase/firestore/lite';
 
-export const deleteData = async (url) => {
-    console.log('Simulating delete operation');
-    console.log('URL:', url);
-  
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        console.log('Delete successful (simulated)');
-        resolve({ success: true });
-      }, 1000); // Simulate a delay
-    });
-  };
-  
+import { FirebaseDb } from 'src/firebase/firebaseConfig';
+
+export const deleteData = async (path, id) => {
+  try {
+    const docRef = doc(FirebaseDb, path, id);
+    await deleteDoc(docRef);
+    console.log('Document successfully deleted!');
+  } catch (error) {
+    console.error('Error deleting document:', error);
+    throw error;
+  }
+};
