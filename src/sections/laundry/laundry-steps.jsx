@@ -1,5 +1,7 @@
+import _ from 'lodash';
 import { useState } from 'react';
-import { Box, Stack, Button, Typography, TextField, MenuItem } from '@mui/material';
+
+import { Box, Stack, Button, MenuItem , TextField, Typography} from '@mui/material';
 
 // Sample steps array
 const steps = [
@@ -35,20 +37,20 @@ export default function LaundrySteps() {
   const [binNumber, setBinNumber] = useState('');
 
   const handleStepClick = (stepId) => {
-    if (stepId === currentStep) {
+    if (stepId === currentStep && !stepTimes[stepId]?.start) {
       const now = new Date().toLocaleTimeString();
       setStepTimes(prev => ({
         ...prev,
         [stepId]: {
           start: now,
-          end: prev[stepId]?.end || null,
+          end: null,
           person: personInCharge,
         },
       }));
     }
   };
 
-  const handleCompleteStep = () => {
+  const handleCompleteStep = async () => {
     if (currentStep) {
       setStepTimes(prev => ({
         ...prev,
@@ -58,8 +60,64 @@ export default function LaundrySteps() {
         },
       }));
       setCompletedSteps(prev => new Set(prev.add(currentStep)));
-      setCurrentStep(prev => Math.min(prev + 1, steps.length)); // Move to next step
+
+      if (currentStep === steps.length) {
+        const personInChargeUser = users.find(user => user.id === personInCharge) || {};
+        const data = {
+          steps: Array.from(completedSteps).map(id => ({
+            id,
+            name: _.get(steps.find(step => step.id === id), 'name', ''),
+            times: _.get(stepTimes, id, {}),
+          })),
+          company,
+          binNumber,
+          personInCharge: `${personInChargeUser.firstName || ''} ${personInChargeUser.lastName || ''}`,
+        };
+
+        try {
+          const response = await fetch('https://your-firebase-url.com/data', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+          });
+
+          if (response.ok) {
+            alert('Data sent successfully!');
+            resetSteps();
+          } else {
+            alert('Failed to send data');
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          alert('Error sending data');
+        }
+      } else {
+        setCurrentStep(prev => Math.min(prev + 1, steps.length)); // Move to next step
+      }
     }
+  };
+
+  const handleStartStep = () => {
+    const now = new Date().toLocaleTimeString();
+    setStepTimes(prev => ({
+      ...prev,
+      [currentStep]: {
+        start: now,
+        end: null,
+        person: personInCharge,
+      },
+    }));
+  };
+
+  const resetSteps = () => {
+    setCurrentStep(1);
+    setStepTimes({});
+    setCompletedSteps(new Set());
+    setPersonInCharge(users[0].id);
+    setCompany('');
+    setBinNumber('');
   };
 
   return (
@@ -150,9 +208,15 @@ export default function LaundrySteps() {
             <Typography variant="body2">
               Bin Number: {binNumber}
             </Typography>
-            <Button onClick={handleCompleteStep} variant="contained" color="success">
-              {stepTimes[currentStep]?.start ? 'Mark as Completed' : 'Start'}
-            </Button>
+            {!stepTimes[currentStep]?.start ? (
+              <Button onClick={handleStartStep} variant="contained" color="primary">
+                Start
+              </Button>
+            ) : (
+              <Button onClick={handleCompleteStep} variant="contained" color="success">
+                Mark as Completed
+              </Button>
+            )}
           </Stack>
         )}
       </Stack>
