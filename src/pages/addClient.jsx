@@ -8,7 +8,7 @@ export default function AddClient() {
   return (
     <>
       <Helmet>
-        <title> Client Profile | Minimal UI </title>
+        <title> Client Profile | Mr. Linen </title>
       </Helmet>
 
       <AddClientView />
