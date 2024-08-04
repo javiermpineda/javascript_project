@@ -42,7 +42,7 @@ const navConfig = [
   {
     title: 'laundry',
     path: '/laundry   ',
-    icon: icon('  '),
+    icon: icon('ic_laundry'),
   },
   {
     title: 'codes',

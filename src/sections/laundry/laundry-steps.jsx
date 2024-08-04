@@ -1,7 +1,9 @@
 import _ from 'lodash';
 import { useState } from 'react';
 
-import { Box, Stack, Button, MenuItem , TextField, Typography} from '@mui/material';
+import { Box, Stack, Button, MenuItem, TextField, Typography } from '@mui/material';
+
+import LaundrySummary from './laundry-summary'; // Import the LaundrySummary component
 
 // Sample steps array
 const steps = [
@@ -92,6 +94,7 @@ export default function LaundrySteps() {
         } catch (error) {
           console.error('Error:', error);
           alert('Error sending data');
+          resetSteps();
         }
       } else {
         setCurrentStep(prev => Math.min(prev + 1, steps.length)); // Move to next step
@@ -120,106 +123,121 @@ export default function LaundrySteps() {
     setBinNumber('');
   };
 
+  const isStartButtonDisabled = !company || !binNumber;
+
   return (
-    <Box sx={{ p: 3 }}>
-      <Typography variant="h6" gutterBottom>
-        Laundry Process
-      </Typography>
-      {currentStep === 1 && (
-        <Stack spacing={2} sx={{ mb: 3 }}>
-          <TextField
-            select
-            label="Person in Charge"
-            value={personInCharge}
-            onChange={(e) => setPersonInCharge(e.target.value)}
-            fullWidth
-          >
-            {users.map(user => (
-              <MenuItem key={user.id} value={user.id}>
-                {user.firstName} {user.lastName}
-              </MenuItem>
-            ))}
-          </TextField>
-          <TextField
-            label="Company"
-            value={company}
-            onChange={(e) => setCompany(e.target.value)}
-            fullWidth
-          />
-          <TextField
-            label="Bin Number"
-            value={binNumber}
-            onChange={(e) => setBinNumber(e.target.value)}
-            fullWidth
-          />
-        </Stack>
-      )}
-      <Stack spacing={2} direction="row" flexWrap="wrap" justifyContent="center">
-        {steps.map(step => (
-          <Button
-            key={step.id}
-            variant={currentStep === step.id ? 'contained' : 'outlined'}
-            onClick={() => handleStepClick(step.id)}
-            disabled={step.id !== currentStep && !completedSteps.has(step.id)}
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: 100,
-              height: 100,
-              borderRadius: 2,
-              overflow: 'hidden',
-              textAlign: 'center',
-              p: 1,
-              mb: 1,
-              boxShadow: 3,
-              backgroundColor: step.id === currentStep ? 'primary.main' : 'background.default',
-              color: step.id === currentStep ? 'white' : 'text.primary',
-            }}
-          >
-            <img 
-              src={`/assets/images/steps/${step.image}`} 
-              alt={step.name} 
-              style={{ width: '80%', height: '80%', objectFit: 'contain' }} 
+    <Box sx={{ p: 3, display: 'flex', flexDirection: 'column', height: '100vh' }}>
+      <Stack spacing={2} flexGrow={1}>
+        <Typography variant="h6" gutterBottom>
+          Laundry Process
+        </Typography>
+        {currentStep === 1 && (
+          <Stack spacing={2} sx={{ mb: 3 }}>
+            <TextField
+              select
+              label="Person in Charge"
+              value={personInCharge}
+              onChange={(e) => setPersonInCharge(e.target.value)}
+              fullWidth
+            >
+              {users.map(user => (
+                <MenuItem key={user.id} value={user.id}>
+                  {user.firstName} {user.lastName}
+                </MenuItem>
+              ))}
+            </TextField>
+            <TextField
+              label="Company"
+              value={company}
+              onChange={(e) => setCompany(e.target.value)}
+              fullWidth
             />
-            <Typography variant="caption" sx={{ mt: 1 }}>
-              {step.name}
-            </Typography>
-          </Button>
-        ))}
-        {currentStep && (
-          <Stack spacing={1} sx={{ mt: 2, textAlign: 'center' }}>
-            <Typography variant="body1">
-              Current Step: {steps.find(step => step.id === currentStep)?.name}
-            </Typography>
-            <Typography variant="body2">
-              Start Time: {stepTimes[currentStep]?.start || 'Not Started'}
-            </Typography>
-            <Typography variant="body2">
-              End Time: {stepTimes[currentStep]?.end || 'In Progress'}
-            </Typography>
-            <Typography variant="body2">
-              Person in Charge: {users.find(user => user.id === stepTimes[currentStep]?.person)?.firstName} {users.find(user => user.id === stepTimes[currentStep]?.person)?.lastName}
-            </Typography>
-            <Typography variant="body2">
-              Company: {company}
-            </Typography>
-            <Typography variant="body2">
-              Bin Number: {binNumber}
-            </Typography>
-            {!stepTimes[currentStep]?.start ? (
-              <Button onClick={handleStartStep} variant="contained" color="primary">
-                Start
-              </Button>
-            ) : (
-              <Button onClick={handleCompleteStep} variant="contained" color="success">
-                Mark as Completed
-              </Button>
-            )}
+            <TextField
+              label="Bin Number"
+              value={binNumber}
+              onChange={(e) => setBinNumber(e.target.value)}
+              fullWidth
+            />
           </Stack>
         )}
+        <Stack spacing={2} direction="row" flexWrap="wrap" justifyContent="center">
+          {steps.map(step => (
+            <Button
+              key={step.id}
+              variant={currentStep === step.id ? 'contained' : 'outlined'}
+              onClick={() => handleStepClick(step.id)}
+              disabled={isStartButtonDisabled || (step.id !== currentStep && !completedSteps.has(step.id))}
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: 120, // Adjust width as needed
+                height: 120, // Adjust height as needed
+                borderRadius: 2,
+                overflow: 'hidden',
+                textAlign: 'center',
+                p: 1,
+                mb: 1,
+                boxShadow: 3,
+                backgroundColor: step.id === currentStep ? 'primary.main' : 'background.default',
+                color: step.id === currentStep ? 'white' : 'text.primary',
+              }}
+            >
+              <img 
+                src={`/assets/images/steps/${step.image}`} 
+                alt={step.name} 
+                style={{ width: '80%', height: '80%', objectFit: 'contain' }} 
+              />
+              <Typography variant="caption" sx={{ mt: 1 }}>
+                {step.name}
+              </Typography>
+            </Button>
+          ))}
+        </Stack>
       </Stack>
+      {currentStep && (
+        <Stack spacing={1} sx={{ textAlign: 'center', mb: 2, mt: 4.5 }}>
+          <Typography variant="body1">
+            Current Step: {steps.find(step => step.id === currentStep)?.name}
+          </Typography>
+          <Typography variant="body2">
+            Start Time: {stepTimes[currentStep]?.start || 'Not Started'}
+          </Typography>
+          <Typography variant="body2">
+            End Time: {stepTimes[currentStep]?.end || 'In Progress'}
+          </Typography>
+          <Typography variant="body2">
+            Person in Charge: {users.find(user => user.id === stepTimes[currentStep]?.person)?.firstName} {users.find(user => user.id === stepTimes[currentStep]?.person)?.lastName}
+          </Typography>
+          <Typography variant="body2">
+            Company: {company}
+          </Typography>
+          <Typography variant="body2">
+            Bin Number: {binNumber}
+          </Typography>
+          {!stepTimes[currentStep]?.start ? (
+            <Button onClick={handleStartStep} variant="contained" color="primary" disabled={isStartButtonDisabled}>
+              Start
+            </Button>
+          ) : (
+            <Button onClick={handleCompleteStep} variant="contained" color="success">
+              Mark as Completed
+            </Button>
+          )}
+        </Stack>
+      )}
+      {currentStep > steps.length -1 && (
+        <LaundrySummary
+          steps={steps}
+          stepTimes={stepTimes}
+          completedSteps={Array.from(completedSteps)}
+          company={company}
+          binNumber={binNumber}
+          personInCharge={`${users.find(user => user.id === personInCharge)?.firstName || ''} ${users.find(user => user.id === personInCharge)?.lastName || ''}`}
+          onRestart={resetSteps}
+        />
+      )}
     </Box>
   );
 }
