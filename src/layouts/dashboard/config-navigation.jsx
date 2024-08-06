@@ -40,19 +40,14 @@ const navConfig = [
     ],
   },
   {
-    title: 'order',
-    path: '/order',
-    icon: icon('ic_cart'),
+    title: 'laundry',
+    path: '/laundry   ',
+    icon: icon('ic_laundry'),
   },
   {
-    title: 'product',
-    path: '/products',
-    icon: icon('ic_cart'),
-  },
-  {
-    title: 'blog',
-    path: '/blog',
-    icon: icon('ic_blog'),
+    title: 'codes',
+    path: '/codes',
+    icon: icon('ic_codes'),
   },
   {
     title: 'login',
