@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Box, Stack, Button, Typography } from '@mui/material';
+import { Box, Stack, Typography } from '@mui/material';
 
 const LaundrySummary = ({ steps, stepTimes, completedSteps, company, binNumber, personInCharge, onRestart }) => (
   <Box sx={{ p: 3, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -32,9 +32,6 @@ const LaundrySummary = ({ steps, stepTimes, completedSteps, company, binNumber, 
         </Box>
       ))}
     </Stack>
-    <Button variant="contained" color="primary" onClick={onRestart}>
-      Restart
-    </Button>
   </Box>
 );
 

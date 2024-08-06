@@ -1,9 +1,13 @@
 import _ from 'lodash';
 import { useState } from 'react';
 
-import { Box, Stack, Button, MenuItem, TextField, Typography } from '@mui/material';
+import { Box, Stack, Button, MenuItem, TextField, Typography, CircularProgress } from '@mui/material';
 
-import LaundrySummary from './laundry-summary'; // Import the LaundrySummary component
+import { updateData } from 'src/helpers/updateData';
+
+import StepButton from './laundry-stepButton';
+import LaundrySummary from './laundry-summary'; 
+import { useDataFetch } from './laundry-dataFetch'; 
 
 // Sample steps array
 const steps = [
@@ -21,22 +25,42 @@ const steps = [
   { id: 12, name: 'Delivery', image: 'step_12.svg' },
 ];
 
-// Sample users array
-const users = [
-  { id: '6cnQhoS3lHZnSEEULArp', firstName: 'Ana', lastName: 'Rodriguez', role: 'admin', position: 'operator' },
-  { id: 'DITttFhSFgCi4Cyb0v1G', firstName: 'Juan', lastName: 'Corso', role: 'admin', position: 'driver' },
-  { id: 'J2bO2vhhJHRAjO1EEM57', firstName: 'Luisa', lastName: 'Fernandez', role: 'admin', position: 'operator' },
-  { id: 'SSg8gfFkOKhmErNn3qet', firstName: 'Javier', lastName: 'Martinez', role: 'admin', position: 'operator' },
-  { id: 'yDaw9DRZtUSk0H7Jt12A', firstName: 'Camila', lastName: 'Perez', role: 'employee', position: 'driver' },
-];
-
 export default function LaundrySteps() {
+  const { data, loading, error } = useDataFetch();
   const [currentStep, setCurrentStep] = useState(1);
   const [stepTimes, setStepTimes] = useState({});
   const [completedSteps, setCompletedSteps] = useState(new Set());
-  const [personInCharge, setPersonInCharge] = useState(users[0].id);
+  const [personInCharge, setPersonInCharge] = useState('');
   const [company, setCompany] = useState('');
   const [binNumber, setBinNumber] = useState('');
+  const [startedSteps, setStartedSteps] = useState(new Set()); // Track started steps
+
+  if (loading) return <CircularProgress />;
+  if (error) return <Typography color="error">Error: {error}</Typography>;
+
+  const { users, clients, pickUps, orders } = data;
+
+  const filteredPickUps = pickUps.filter(pickUp =>
+    orders.some(order => order.IdPickUp === pickUp.id)
+  );
+
+  const filteredClientIds = new Set(filteredPickUps.flatMap(pickUp =>
+    pickUp.details.map(detail => detail.idCliente)
+  ));
+  const filteredClients = clients.filter(client => filteredClientIds.has(client.id));
+
+  const filteredPickUpsByCompany = filteredPickUps.filter(pickUp =>
+    pickUp.details.some(detail => detail.idCliente === company)
+  );
+
+  const flattenedDetails = filteredPickUpsByCompany.flatMap(pickUp => pickUp.details);
+
+  const unitsCollectedKeys = flattenedDetails
+    .flatMap(detail => Object.entries(detail.unitsCollected))
+    .filter(([key, value]) => value > 0)
+    .map(([key]) => key);
+
+  const uniqueUnitsCollectedKeys = [...new Set(unitsCollectedKeys)];
 
   const handleStepClick = (stepId) => {
     if (stepId === currentStep && !stepTimes[stepId]?.start) {
@@ -49,6 +73,7 @@ export default function LaundrySteps() {
           person: personInCharge,
         },
       }));
+      setStartedSteps(prev => new Set(prev.add(stepId))); // Mark step as started
     }
   };
 
@@ -65,7 +90,7 @@ export default function LaundrySteps() {
 
       if (currentStep === steps.length) {
         const personInChargeUser = users.find(user => user.id === personInCharge) || {};
-        const data = {
+        const dataToUpdate = {
           steps: Array.from(completedSteps).map(id => ({
             id,
             name: _.get(steps.find(step => step.id === id), 'name', ''),
@@ -77,30 +102,20 @@ export default function LaundrySteps() {
         };
 
         try {
-          const response = await fetch('https://your-firebase-url.com/data', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data),
-          });
-
-          if (response.ok) {
-            alert('Data sent successfully!');
-            resetSteps();
-          } else {
-            alert('Failed to send data');
-          }
-        } catch (error) {
-          console.error('Error:', error);
-          alert('Error sending data');
+          await updateData('order', filteredPickUps[0].id, dataToUpdate); // Adjust the path and ID
+          alert('Data updated successfully!');
+          resetSteps();
+        } catch (e) {
+          console.error('Error updating document:', e);
+          alert('Error updating data');
           resetSteps();
         }
       } else {
-        setCurrentStep(prev => Math.min(prev + 1, steps.length)); // Move to next step
+        setCurrentStep(prev => Math.min(prev + 1, steps.length));
       }
     }
   };
+
 
   const handleStartStep = () => {
     const now = new Date().toLocaleTimeString();
@@ -112,13 +127,15 @@ export default function LaundrySteps() {
         person: personInCharge,
       },
     }));
+    setStartedSteps(prev => new Set(prev.add(currentStep))); // Mark step as started
   };
 
   const resetSteps = () => {
     setCurrentStep(1);
     setStepTimes({});
     setCompletedSteps(new Set());
-    setPersonInCharge(users[0].id);
+    setStartedSteps(new Set()); // Reset started steps
+    setPersonInCharge(users[0]?.id || '');
     setCompany('');
     setBinNumber('');
   };
@@ -147,59 +164,49 @@ export default function LaundrySteps() {
               ))}
             </TextField>
             <TextField
+              select
               label="Company"
               value={company}
               onChange={(e) => setCompany(e.target.value)}
               fullWidth
-            />
+            >
+              {filteredClients.map(client => (
+                <MenuItem key={client.id} value={client.id}>
+                  {client.name}
+                </MenuItem>
+              ))}
+            </TextField>
             <TextField
-              label="Bin Number"
+              select
+              label="Units Collected"
               value={binNumber}
               onChange={(e) => setBinNumber(e.target.value)}
               fullWidth
-            />
+            >
+              {uniqueUnitsCollectedKeys.map(key => (
+                <MenuItem key={key} value={key}>
+                  {key}
+                </MenuItem>
+              ))}
+            </TextField>
           </Stack>
         )}
+
         <Stack spacing={2} direction="row" flexWrap="wrap" justifyContent="center">
-          {steps.map(step => (
-            <Button
+          {steps.filter(step => step.id === currentStep).map(step => (
+            <StepButton
               key={step.id}
-              variant={currentStep === step.id ? 'contained' : 'outlined'}
-              onClick={() => handleStepClick(step.id)}
-              disabled={isStartButtonDisabled || (step.id !== currentStep && !completedSteps.has(step.id))}
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: 120, // Adjust width as needed
-                height: 120, // Adjust height as needed
-                borderRadius: 2,
-                overflow: 'hidden',
-                textAlign: 'center',
-                p: 1,
-                mb: 1,
-                boxShadow: 3,
-                backgroundColor: step.id === currentStep ? 'primary.main' : 'background.default',
-                color: step.id === currentStep ? 'white' : 'text.primary',
-              }}
-            >
-              <img 
-                src={`/assets/images/steps/${step.image}`} 
-                alt={step.name} 
-                style={{ width: '80%', height: '80%', objectFit: 'contain' }} 
-              />
-              <Typography variant="caption" sx={{ mt: 1 }}>
-                {step.name}
-              </Typography>
-            </Button>
+              step={step}
+              currentStep={currentStep}
+              onClick={handleStepClick}
+              isDisabled={!company || !binNumber || (step.id !== currentStep && !completedSteps.has(step.id))}
+            />
           ))}
         </Stack>
-      </Stack>
       {currentStep && (
         <Stack spacing={1} sx={{ textAlign: 'center', mb: 2, mt: 4.5 }}>
           <Typography variant="body1">
-            Current Step: {steps.find(step => step.id === currentStep)?.name}
+            {`Current Step: ${steps.find(step => step.id === currentStep)?.name} ${currentStep} / ${steps.length}`}
           </Typography>
           <Typography variant="body2">
             Start Time: {stepTimes[currentStep]?.start || 'Not Started'}
@@ -208,21 +215,23 @@ export default function LaundrySteps() {
             End Time: {stepTimes[currentStep]?.end || 'In Progress'}
           </Typography>
           <Typography variant="body2">
-            Person in Charge: {users.find(user => user.id === stepTimes[currentStep]?.person)?.firstName} {users.find(user => user.id === stepTimes[currentStep]?.person)?.lastName}
+            Person in Charge: {stepTimes[currentStep]?.person || 'Unknown'}
           </Typography>
-          <Typography variant="body2">
-            Company: {company}
-          </Typography>
-          <Typography variant="body2">
-            Bin Number: {binNumber}
-          </Typography>
-          {!stepTimes[currentStep]?.start ? (
-            <Button onClick={handleStartStep} variant="contained" color="primary" disabled={isStartButtonDisabled}>
-              Start
+          {!startedSteps.has(currentStep) && (
+            <Button
+              variant="contained"
+              onClick={handleStartStep}
+              disabled={isStartButtonDisabled}
+            >
+              Start Step
             </Button>
-          ) : (
-            <Button onClick={handleCompleteStep} variant="contained" color="success">
-              Mark as Completed
+          )}
+          {stepTimes[currentStep]?.start && !stepTimes[currentStep]?.end && (
+            <Button
+              variant="contained"
+              onClick={handleCompleteStep}
+            >
+              Complete Step
             </Button>
           )}
         </Stack>
@@ -235,9 +244,9 @@ export default function LaundrySteps() {
           company={company}
           binNumber={binNumber}
           personInCharge={`${users.find(user => user.id === personInCharge)?.firstName || ''} ${users.find(user => user.id === personInCharge)?.lastName || ''}`}
-          onRestart={resetSteps}
         />
       )}
+      </Stack>
     </Box>
   );
 }
