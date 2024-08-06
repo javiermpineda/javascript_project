@@ -1,17 +1,17 @@
 import { Helmet } from 'react-helmet-async';
 
-import { AdminProfileView } from 'src/sections/admin/view';
+import { LaundryView } from 'src/sections/laundry/view';
 
 // ----------------------------------------------------------------------
 
-export default function AdminProfile() {
+export default function LaundryPage() {
   return (
     <>
       <Helmet>
-        <title> Admin Profile | Mr. Linen </title>
+        <title> Pipeline | Mr. Linen </title>
       </Helmet>
 
-      <AdminProfileView />
+      <LaundryView />
     </>
   );
 }
