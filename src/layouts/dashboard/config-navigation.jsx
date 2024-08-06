@@ -64,6 +64,11 @@ const navConfig = [
     path: '/404',
     icon: icon('ic_disabled'),
   },
+  {
+    title: 'Order Reception',
+    path: 'orderreception',
+    icon: icon('ic_cart'),
+  },
 ];
 
 export default navConfig;

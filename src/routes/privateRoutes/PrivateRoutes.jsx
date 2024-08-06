@@ -19,7 +19,7 @@ export const OrderPage = lazy(() => import('src/pages/order'));
 export const OrderCreatePage = lazy(() => import('src/pages/orderCreate'));
 export const OrderEditPage = lazy(() => import('src/pages/orderEdit'));
 export const OrderFinalizePage = lazy(() => import('src/pages/orderFinalize'));
-
+export const OrderReception = lazy(() => import('src/pages/orderReception'));
 
 export const PrivateRoutes = () => {
   return (
@@ -40,6 +40,7 @@ export const PrivateRoutes = () => {
           <Route path="order/add" element={<OrderCreatePage />} />
           <Route path="order/edit/:id" element={<OrderEditPage />} />
           <Route path="order/finalize/:id" element={<OrderFinalizePage />} />
+          <Route path="orderreception" element={<OrderReception />} />
 
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
