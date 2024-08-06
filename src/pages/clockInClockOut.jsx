@@ -8,7 +8,7 @@ export default function ClockInClockOut() {
   return (
     <>
       <Helmet>
-        <title> Clock In Clock Out | Minimal UI </title>
+        <title> Clock In Clock Out | Mr. Linen </title>
       </Helmet>
 
       <ClockInClockOutView />

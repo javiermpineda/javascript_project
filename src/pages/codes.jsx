@@ -1,17 +1,17 @@
 import { Helmet } from 'react-helmet-async';
 
-import { AdminProfileView } from 'src/sections/admin/view';
+import { CodesView } from 'src/sections/codes/view';
 
 // ----------------------------------------------------------------------
 
-export default function AdminProfile() {
+export default function CodesPage() {
   return (
     <>
       <Helmet>
-        <title> Admin Profile | Mr. Linen </title>
+        <title> Codes | Mr. Linen </title>
       </Helmet>
 
-      <AdminProfileView />
+      <CodesView />
     </>
   );
 }
