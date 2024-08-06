@@ -26,16 +26,16 @@ const OrderReceptionView = () => {
         const driversCollection = collection(FirebaseDb, 'profile', 'employee', 'data');
         const driversSnapshot = await getDocs(driversCollection);
         const driversList = driversSnapshot.docs
-          .map(doc => ({
+          .map((doc) => ({
             id: doc.id,
             name: `${doc.data().firstName} ${doc.data().lastName}`,
             position: doc.data().position,
           }))
-          .filter(employee => employee.position === 'driver');
-        
+          .filter((employee) => employee.position === 'driver');
+
         const clientsCollection = collection(FirebaseDb, 'profile', 'client', 'data');
         const clientsSnapshot = await getDocs(clientsCollection);
-        const clientsList = clientsSnapshot.docs.map(doc => ({
+        const clientsList = clientsSnapshot.docs.map((doc) => ({
           id: doc.id,
           name: doc.data().name,
         }));
@@ -55,17 +55,20 @@ const OrderReceptionView = () => {
     try {
       const ordersCollection = collection(FirebaseDb, 'order');
       const ordersSnapshot = await getDocs(ordersCollection);
-      const ordersList = ordersSnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+      const ordersList = ordersSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
 
       const selectedDateFormatted = format(date, 'MM/dd/yyyy');
-      const filteredOrders = ordersList.filter(order => order.driverId === driverId && order.orderDate === selectedDateFormatted);
+      const filteredOrders = ordersList.filter(
+        (order) => order.driverId === driverId && order.orderDate === selectedDateFormatted
+      );
 
-      const enrichedOrders = filteredOrders.flatMap(order =>
-        order.details.map(detail => {
-          const client = clients.find(client => client.id === detail.idCliente);
+      const enrichedOrders = filteredOrders.flatMap((order) =>
+        order.details.map((detail) => {
+          const client = clients.find((client) => client.id === detail.idCliente);
           return {
             ...order,
             id: `${detail.idCliente}-${order.id}`, // ID único para DataGrid
+            IdPickUp: order.id,
             companyName: client ? client.name : 'Unknown',
             ...detail.unitsCollected,
             idCliente: detail.idCliente,
@@ -91,7 +94,7 @@ const OrderReceptionView = () => {
         title: 'Error',
         text: 'Please select a driver.',
         icon: 'error',
-        confirmButtonText: 'OK'
+        confirmButtonText: 'OK',
       });
       return;
     }
@@ -107,10 +110,12 @@ const OrderReceptionView = () => {
   };
 
   const handleButtonClick = async (order) => {
+    console.log(order);
     try {
       const orderRef = doc(FirebaseDb, 'orders', order.id); // Usar ID único para la orden
       await setDoc(orderRef, {
         idCliente: order.idCliente,
+        IdPickUp: order.IdPickUp,
         id: order.id,
         acceptedOnSite: true,
         notes: order.notes,
@@ -126,7 +131,9 @@ const OrderReceptionView = () => {
 
       const orderData = orderDoc.data();
       if (orderData && orderData.details) {
-        const detailIndex = orderData.details.findIndex(detail => detail.idCliente === order.idCliente);
+        const detailIndex = orderData.details.findIndex(
+          (detail) => detail.idCliente === order.idCliente
+        );
 
         if (detailIndex > -1) {
           orderData.details[detailIndex].acceptedOnSite = true;
@@ -137,15 +144,19 @@ const OrderReceptionView = () => {
           });
 
           // Marcar el registro como enviado en la pantalla
-          setOrders(prevOrders => prevOrders.map(o => 
-            o.id === order.id ? { ...o, acceptedOnSite: true, notes: 'Information already sent' } : o
-          ));
+          setOrders((prevOrders) =>
+            prevOrders.map((o) =>
+              o.id === order.id
+                ? { ...o, acceptedOnSite: true, notes: 'Information already sent' }
+                : o
+            )
+          );
 
           Swal.fire({
             title: 'Success',
             text: 'Order has been updated successfully.',
             icon: 'success',
-            confirmButtonText: 'OK'
+            confirmButtonText: 'OK',
           });
         } else {
           throw new Error(`Detail not found for idCliente: ${order.idCliente}`);
@@ -158,7 +169,7 @@ const OrderReceptionView = () => {
         title: 'Error',
         text: error.message,
         icon: 'error',
-        confirmButtonText: 'OK'
+        confirmButtonText: 'OK',
       });
     }
   };
@@ -207,16 +218,26 @@ const OrderReceptionView = () => {
   ];
 
   if (loading) {
-    return <Typography variant="h6" align="center">Loading...</Typography>;
+    return (
+      <Typography variant="h6" align="center">
+        Loading...
+      </Typography>
+    );
   }
 
   if (error) {
-    return <Typography variant="h6" align="center" color="error">Error: {error}</Typography>;
+    return (
+      <Typography variant="h6" align="center" color="error">
+        Error: {error}
+      </Typography>
+    );
   }
 
   return (
     <Container>
-      <Typography variant="h4" align="center" gutterBottom>Order Reception</Typography>
+      <Typography variant="h4" align="center" gutterBottom>
+        Order Reception
+      </Typography>
       <Box display="flex" justifyContent="space-between" mb={3}>
         <LocalizationProvider dateAdapter={AdapterDateFns}>
           <DatePicker
@@ -234,7 +255,9 @@ const OrderReceptionView = () => {
           renderInput={(params) => <TextField {...params} label="Select Driver" fullWidth />}
           sx={{ width: 300 }} // Ajusta el ancho del Autocomplete
         />
-        <Button variant="contained" color="primary" onClick={handleConsult}>Consult</Button>
+        <Button variant="contained" color="primary" onClick={handleConsult}>
+          Consult
+        </Button>
       </Box>
       <Box sx={{ height: 400, width: '100%', marginTop: 3 }}>
         <DataGrid
