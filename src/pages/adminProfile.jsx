@@ -8,7 +8,7 @@ export default function AdminProfile() {
   return (
     <>
       <Helmet>
-        <title> Admin Profile | Mr. Linen </title>
+        <title> Admin Profile | Minimal UI </title>
       </Helmet>
 
       <AdminProfileView />

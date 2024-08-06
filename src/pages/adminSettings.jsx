@@ -8,7 +8,7 @@ export default function AdminSettings() {
   return (
     <>
       <Helmet>
-        <title> Admin Settings | Mr. Linen </title>
+        <title> Admin Settings | Minimal UI </title>
       </Helmet>
 
       <AdminSettingsView />
