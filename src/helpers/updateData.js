@@ -1,5 +1,5 @@
 // src/helpers/updateData.js
-import { doc, updateDoc } from 'firebase/firestore/lite';
+import { doc, updateDoc } from 'firebase/firestore';
 
 import { FirebaseDb } from 'src/firebase/firebaseConfig';
 

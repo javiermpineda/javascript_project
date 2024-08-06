@@ -1,5 +1,5 @@
 // src/helpers/deleteData.js
-import { doc, deleteDoc } from 'firebase/firestore/lite';
+import { doc, deleteDoc } from 'firebase/firestore';
 
 import { FirebaseDb } from 'src/firebase/firebaseConfig';
 

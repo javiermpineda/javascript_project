@@ -1,11 +1,11 @@
-import { getDocs, collection } from 'firebase/firestore/lite';
+import { getDocs, collection } from 'firebase/firestore';
 
 import { FirebaseDb } from 'src/firebase/firebaseConfig';
 
 export const getData = async (path) => {
-  const querySnapshot = await getDocs(collection(FirebaseDb, `${path}`));
-
+  
   try {
+    const querySnapshot = await getDocs(collection(FirebaseDb, `${path}`));
     const data = [];
 
     querySnapshot.forEach((doc) =>

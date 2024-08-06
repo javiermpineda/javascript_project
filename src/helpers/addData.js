@@ -1,4 +1,4 @@
-import { addDoc,collection } from 'firebase/firestore/lite';
+import { addDoc,collection } from 'firebase/firestore';
 
 import { FirebaseDb } from 'src/firebase/firebaseConfig';
 
