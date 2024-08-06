@@ -8,7 +8,7 @@ export default function Client() {
   return (
     <>
       <Helmet>
-        <title> Client Profile | Mr. Linen </title>
+        <title> Client Profile | Minimal UI </title>
       </Helmet>
 
       <ClientView />

@@ -6,9 +6,9 @@ import DashboardLayout from 'src/layouts/dashboard';
 
 
 export const IndexPage = lazy(() => import('src/pages/app'));
-export const CodesPage = lazy(() => import('src/pages/codes'));
+export const BlogPage = lazy(() => import('src/pages/blog'));
 export const UserPage = lazy(() => import('src/pages/user'));
-export const LaundryPage = lazy(() => import('src/pages/laundry'));
+export const ProductsPage = lazy(() => import('src/pages/products'));
 export const AdminSettings = lazy(() => import('src/pages/adminSettings'));
 export const AdminProfile = lazy(() => import('src/pages/adminProfile'));
 export const Client = lazy(() => import('src/pages/client'));
@@ -27,6 +27,7 @@ export const PrivateRoutes = () => {
       <Suspense fallback={<CircularProgress />}>
         <Routes>
           <Route path="/" element={<IndexPage />} />
+          <Route path="blog" element={<BlogPage />} />
           <Route path="user" element={<UserPage />} />
           <Route path="/admin/profile" element={<AdminProfile />} />
           <Route path="/admin/settings" element={<AdminSettings />} />
@@ -34,8 +35,13 @@ export const PrivateRoutes = () => {
           <Route path="/admin/editClient/:id" element={<EditClient />} />
           <Route path="/admin/addClient/" element={<AddClient />} />
           <Route path="/admin/clockInClockOut/" element={<ClockInClockOut />} />
-          <Route path="laundry" element={<LaundryPage />} />
-          <Route path="codes" element={<CodesPage />} />
+          <Route path="products" element={<ProductsPage />} />
+          <Route path="order" element={<OrderPage />} />
+          <Route path="order/add" element={<OrderCreatePage />} />
+          <Route path="order/edit/:id" element={<OrderEditPage />} />
+          <Route path="order/finalize/:id" element={<OrderFinalizePage />} />
+          <Route path="orderreception" element={<OrderReception />} />
+
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </Suspense>

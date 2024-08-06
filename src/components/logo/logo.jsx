@@ -3,12 +3,31 @@ import { forwardRef } from 'react';
 
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
+import { useTheme } from '@mui/material/styles';
 
 import { RouterLink } from 'src/routes/components';
 
 // ----------------------------------------------------------------------
 
 const Logo = forwardRef(({ disabledLink = false, sx, ...other }, ref) => {
+  const theme = useTheme();
+
+  const PRIMARY_LIGHT = theme.palette.primary.light;
+
+  const PRIMARY_MAIN = theme.palette.primary.main;
+
+  const PRIMARY_DARK = theme.palette.primary.dark;
+
+  // OR using local (public folder)
+  // -------------------------------------------------------
+  // const logo = (
+  //   <Box
+  //     component="img"
+  //     src="/logo/logo_single.svg" => your path
+  //     sx={{ width: 40, height: 40, cursor: 'pointer', ...sx }}
+  //   />
+  // );
+
   const logo = (
     <Box
       ref={ref}
@@ -21,12 +40,38 @@ const Logo = forwardRef(({ disabledLink = false, sx, ...other }, ref) => {
       }}
       {...other}
     >
-      <svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 156 160" width="100%" height="100%">
-        <title>mrlinen-logo</title>
-        <style>
-          {`.s0 { fill: #f5a133; }`}
-        </style>
-        <path id="Path 0" className="s0" d="m68.5 10.1c-3.3 0.5-8.5 1.6-11.5 2.5-3 0.9-9.1 3.4-13.5 5.7-5.9 3.1-10.2 6.3-16.6 12.7-6.9 6.9-9.4 10.3-13.2 17.8-2.6 5-4.4 9.8-4 10.4 0.4 0.7 4.7 6.5 9.6 12.8 5 6.3 9.3 11.9 9.6 12.3 0.3 0.5 13.3-15.6 28.9-35.7 15.5-20.1 28.2-36.9 28.2-37.4 0-0.4-1.4-1-3.2-1.5-1.8-0.4-4.4-0.7-5.8-0.6-1.4 0.1-5.2 0.5-8.5 1zm23.8 52.1l0.2 51.3 52 0.6c5.5-15.5 5.9-18.3 6.2-29.6 0.2-9.5-0.2-14.6-1.3-19-0.9-3.3-3-9.1-4.8-13-1.8-3.8-4.4-8.8-5.9-11-1.5-2.2-5.3-6.6-8.5-9.9-3.1-3.2-8.4-7.7-11.7-9.9-3.3-2.2-8.9-5.3-12.5-6.7-3.6-1.5-8.2-3-10.2-3.4l-3.7-0.7zm-39.9 19.4c-17.7 22.9-23.1 29.3-23.9 28.2-0.6-0.8-5.7-7.6-11.5-15-5.8-7.5-10.8-13.5-11.3-13.2-0.4 0.2-0.7 2.1-0.7 4.2 0 2 0.6 6.6 1.4 10.2 0.7 3.6 2.6 9.7 4.1 13.5 1.5 3.9 4.7 9.9 7 13.5 2.3 3.6 7.4 9.4 11.2 13 3.9 3.6 10.6 8.4 14.9 10.7 4.7 2.6 11.9 5.3 17.9 6.8 5.6 1.4 12.9 2.5 16.5 2.5 3.6 0 10.5-1 15.5-2.1 4.9-1.2 12.4-3.8 16.5-5.7 4.1-2 10-5.6 13-8 3-2.4 6.7-5.8 8.2-7.6l2.7-3.1-56.4-1c-0.4-59.5-0.9-76.5-1.4-76.5-0.5 0-11.2 13.3-23.7 29.6z"/>
+      <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 512 512">
+        <defs>
+          <linearGradient id="BG1" x1="100%" x2="50%" y1="9.946%" y2="50%">
+            <stop offset="0%" stopColor={PRIMARY_DARK} />
+            <stop offset="100%" stopColor={PRIMARY_MAIN} />
+          </linearGradient>
+
+          <linearGradient id="BG2" x1="50%" x2="50%" y1="0%" y2="100%">
+            <stop offset="0%" stopColor={PRIMARY_LIGHT} />
+            <stop offset="100%" stopColor={PRIMARY_MAIN} />
+          </linearGradient>
+
+          <linearGradient id="BG3" x1="50%" x2="50%" y1="0%" y2="100%">
+            <stop offset="0%" stopColor={PRIMARY_LIGHT} />
+            <stop offset="100%" stopColor={PRIMARY_MAIN} />
+          </linearGradient>
+        </defs>
+
+        <g fill={PRIMARY_MAIN} fillRule="evenodd" stroke="none" strokeWidth="1">
+          <path
+            fill="url(#BG1)"
+            d="M183.168 285.573l-2.918 5.298-2.973 5.363-2.846 5.095-2.274 4.043-2.186 3.857-2.506 4.383-1.6 2.774-2.294 3.939-1.099 1.869-1.416 2.388-1.025 1.713-1.317 2.18-.95 1.558-1.514 2.447-.866 1.38-.833 1.312-.802 1.246-.77 1.18-.739 1.111-.935 1.38-.664.956-.425.6-.41.572-.59.8-.376.497-.537.69-.171.214c-10.76 13.37-22.496 23.493-36.93 29.334-30.346 14.262-68.07 14.929-97.202-2.704l72.347-124.682 2.8-1.72c49.257-29.326 73.08 1.117 94.02 40.927z"
+          />
+          <path
+            fill="url(#BG2)"
+            d="M444.31 229.726c-46.27-80.956-94.1-157.228-149.043-45.344-7.516 14.384-12.995 42.337-25.267 42.337v-.142c-12.272 0-17.75-27.953-25.265-42.337C189.79 72.356 141.96 148.628 95.69 229.584c-3.483 6.106-6.828 11.932-9.69 16.996 106.038-67.127 97.11 135.667 184 137.278V384c86.891-1.611 77.962-204.405 184-137.28-2.86-5.062-6.206-10.888-9.69-16.994"
+          />
+          <path
+            fill="url(#BG3)"
+            d="M450 384c26.509 0 48-21.491 48-48s-21.491-48-48-48-48 21.491-48 48 21.491 48 48 48"
+          />
+        </g>
       </svg>
     </Box>
   );
