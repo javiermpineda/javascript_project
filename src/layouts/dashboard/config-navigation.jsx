@@ -33,11 +33,15 @@ const navConfig = [
     title: 'laundry',
     path: '/laundry   ',
     icon: icon('ic_laundry'),
+
+    title: 'product',
+    path: '/products',
+    icon: icon('ic_cart'),
   },
   {
-    title: 'codes',
-    path: '/codes',
-    icon: icon('ic_codes'),
+    title: 'blog',
+    path: '/blog',
+    icon: icon('ic_blog'),
   },
   {
     title: 'Order Reception',

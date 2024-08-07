@@ -8,7 +8,7 @@ export default function AppPage() {
   return (
     <>
       <Helmet>
-        <title> Dashboard | Mr. Linen </title>
+        <title> Dashboard | Minimal UI </title>
       </Helmet>
 
       <AppView />
