@@ -35,13 +35,13 @@ export const PrivateRoutes = () => {
           <Route path="/admin/editClient/:id" element={<EditClient />} />
           <Route path="/admin/addClient/" element={<AddClient />} />
           <Route path="/admin/clockInClockOut/" element={<ClockInClockOut />} />
+          <Route path="products" element={<ProductsPage />} />
           <Route path="order" element={<OrderPage />} />
           <Route path="order/add" element={<OrderCreatePage />} />
           <Route path="order/edit/:id" element={<OrderEditPage />} />
           <Route path="order/finalize/:id" element={<OrderFinalizePage />} />
           <Route path="orderreception" element={<OrderReception />} />
-          <Route path="laundry" element={<LaundryPage />} />
-          <Route path="codes" element={<CodesPage />} />
+
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </Suspense>

@@ -206,6 +206,15 @@ export default function OrderView() {
           >
             Print
           </Button>
+          <Button
+            variant="contained"
+            color="success"
+            size="small"
+            onClick={() => handleFinalize(params.row.id)}
+            startIcon={<CheckCircleIcon />}
+          >
+            Finalize
+          </Button>
         </Box>
       ),
     },
